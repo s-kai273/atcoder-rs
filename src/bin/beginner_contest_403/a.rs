@@ -1,5 +1,7 @@
+use std::io::BufRead;
+
 fn main() {
-    let mut lines = std::io::stdin().lines();
+    let mut lines = std::io::stdin().lock().lines();
     let _: usize = lines.next().unwrap().unwrap().parse().unwrap();
     let a_list: Vec<u32> = lines
         .next()
@@ -11,8 +13,7 @@ fn main() {
     let answer: u32 = a_list
         .iter()
         .enumerate()
-        .filter(|(index, _)| index % 2 == 0)
-        .map(|(_, a)| *a)
+        .filter_map(|(index, &a)| if index % 2 == 0 { Some(a) } else { None })
         .sum();
     println!("{}", answer);
 }
