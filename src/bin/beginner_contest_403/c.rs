@@ -1,11 +1,4 @@
-use std::{collections::HashMap, io::BufRead, str::SplitWhitespace, vec};
-
-#[derive(Clone)]
-enum AuthType {
-    Page(HashMap<usize, u128>),
-    All,
-    None,
-}
+use std::{collections::HashSet, io::BufRead, str::SplitWhitespace, vec};
 
 fn main() {
     let mut lines = std::io::stdin().lock().lines();
@@ -14,66 +7,34 @@ fn main() {
     let n: usize = iter.next().unwrap().parse().unwrap();
     let _: usize = iter.next().unwrap().parse().unwrap();
     let q: usize = iter.next().unwrap().parse().unwrap();
-    let word_size = 128;
-    let mut auth_list: Vec<AuthType> = vec![AuthType::None; n];
+    let mut auth_list: Vec<HashSet<u32>> = vec![HashSet::new(); n];
+    let mut auth_all_list: HashSet<u32> = HashSet::new();
     let mut answer_list: Vec<String> = Vec::new();
 
     (0..q).into_iter().for_each(|_| {
         let query = lines.next().unwrap().unwrap();
-        let query: Vec<usize> = query
+        let query: Vec<u32> = query
             .split_whitespace()
             .map(|s| s.parse().unwrap())
             .collect();
         match query[0] {
-            1 => match &mut auth_list[query[1] - 1] {
-                AuthType::None => {
-                    let mut auth_pages = HashMap::new();
-                    auth_pages.insert(
-                        (query[2] + word_size - 1) / word_size - 1,
-                        1u128 << (query[2] % word_size),
-                    );
-                    auth_list[query[1] - 1] = AuthType::Page(auth_pages);
-                }
-                AuthType::Page(auth_pages) => {
-                    match auth_pages.get_mut(&((query[2] + word_size - 1) / word_size - 1)) {
-                        Some(page) => {
-                            *page |= 1u128 << (query[2] % word_size);
-                        }
-                        None => {
-                            auth_pages.insert(
-                                (query[2] + word_size - 1) / word_size - 1,
-                                1u128 << (query[2] % word_size),
-                            );
-                        }
-                    }
-                }
-                AuthType::All => {}
-            },
+            1 => {
+                auth_list[(query[1] - 1) as usize].insert(query[2] - 1);
+            }
             2 => {
-                auth_list[query[1] - 1] = AuthType::All;
+                auth_all_list.insert(query[1] - 1);
             }
             3 => {
-                let answer = match &auth_list[query[1] - 1] {
-                    AuthType::None => "No",
-                    AuthType::Page(auth_pages) => {
-                        let page_opt =
-                            auth_pages.get(&((query[2] + word_size - 1) / word_size - 1));
-                        match page_opt {
-                            Some(page) => {
-                                if *page & 1u128 << (query[2] % word_size) != 0 {
-                                    "Yes"
-                                } else {
-                                    "No"
-                                }
-                            }
-                            None => "No",
-                        }
-                    }
-                    AuthType::All => "Yes",
+                let answer = if auth_all_list.contains(&(query[1] - 1)) {
+                    "Yes"
+                } else if auth_list[(query[1] - 1) as usize].contains(&(query[2] - 1)) {
+                    "Yes"
+                } else {
+                    "No"
                 };
                 answer_list.push(answer.to_string());
             }
-            _ => unreachable!("invalid query"),
+            _ => unreachable!("invalid query type"),
         }
     });
 
