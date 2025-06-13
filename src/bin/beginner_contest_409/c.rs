@@ -6,7 +6,7 @@ fn main() {
     let mut iter: SplitWhitespace = line.split_whitespace();
     let _: u32 = iter.next().unwrap().parse().unwrap();
     let l: u32 = iter.next().unwrap().parse().unwrap();
-    let mut points: HashMap<u32, Vec<u32>> = HashMap::from_iter((0..l).map(|i| (i, Vec::new())));
+    let mut points: HashMap<u32, Vec<u32>> = (0..l).map(|i| (i, Vec::new())).collect();
     let mut current_point = 0;
     points.get_mut(&0).unwrap().push(0);
     lines
@@ -21,11 +21,12 @@ fn main() {
             points.get_mut(&current_point).unwrap().push((i + 1) as u32);
         });
     let answer: usize = if l % 3 == 0 {
-        (0..(l / 3))
+        let offset = l / 3;
+        (0..offset)
             .map(|i| {
                 points[&i].iter().count()
-                    * points[&(i + l / 3)].iter().count()
-                    * points[&(i + 2 * l / 3)].iter().count()
+                    * points[&(i + offset)].iter().count()
+                    * points[&(i + 2 * offset)].iter().count()
             })
             .sum()
     } else {
