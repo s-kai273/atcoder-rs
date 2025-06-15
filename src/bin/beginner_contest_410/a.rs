@@ -11,6 +11,6 @@ fn main() {
         .map(|a| a.parse().unwrap())
         .collect();
     let k: u32 = lines.next().unwrap().unwrap().parse().unwrap();
-    let answer = a_list.iter().filter(|&a| *a >= k).count();
+    let answer = a_list.iter().filter(|&a| a >= k).count();
     println!("{}", answer);
 }
