@@ -7,6 +7,7 @@ fn main() {
     let n: usize = iter.next().unwrap().parse().unwrap();
     let q: usize = iter.next().unwrap().parse().unwrap();
     let mut a_list: Vec<usize> = (1..=n).collect();
+    let mut offset: usize = 0;
     (0..q).for_each(|_| {
         let query: Vec<usize> = lines
             .next()
@@ -19,15 +20,23 @@ fn main() {
             1 => {
                 let p = query[1];
                 let x = query[2];
-                a_list[p - 1] = x;
+                if p > n - offset {
+                    a_list[p - (n - offset) - 1] = x;
+                } else {
+                    a_list[p + offset - 1] = x;
+                }
             }
             2 => {
                 let p = query[1];
-                println!("{}", a_list[p - 1]);
+                if p > n - offset {
+                    println!("{}", a_list[p - (n - offset) - 1]);
+                } else {
+                    println!("{}", a_list[p + offset - 1]);
+                }
             }
             3 => {
-                let k = query[1] % n;
-                a_list.rotate_left(k);
+                let k = query[1];
+                offset = (offset + k) % n;
             }
             _ => unreachable!("invalid query"),
         }
