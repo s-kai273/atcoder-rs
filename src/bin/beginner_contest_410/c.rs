@@ -20,19 +20,11 @@ fn main() {
             1 => {
                 let p = query[1];
                 let x = query[2];
-                if p > n - offset {
-                    a_list[p - (n - offset) - 1] = x;
-                } else {
-                    a_list[p + offset - 1] = x;
-                }
+                a_list[(p + offset - 1) % n] = x;
             }
             2 => {
                 let p = query[1];
-                if p > n - offset {
-                    println!("{}", a_list[p - (n - offset) - 1]);
-                } else {
-                    println!("{}", a_list[p + offset - 1]);
-                }
+                println!("{}", a_list[(p + offset - 1) % n]);
             }
             3 => {
                 let k = query[1];
