@@ -10,18 +10,10 @@ fn main() {
         .split_whitespace()
         .map(|d| d.parse().unwrap())
         .collect();
-    (0..n).for_each(|i| {
-        let mut answer: Vec<u32> = Vec::new();
-        (i + 1..n).for_each(|j| {
-            answer.push(d_list[i..j].iter().sum());
-        });
-        println!(
-            "{}",
-            answer
-                .iter()
-                .map(|x| x.to_string())
-                .collect::<Vec<String>>()
-                .join(" ")
-        );
+    (0..n - 1).for_each(|i| {
+        let answer: Vec<String> = (i + 1..n)
+            .map(|j| d_list[i..j].iter().sum::<u32>().to_string())
+            .collect();
+        println!("{}", answer.join(" "));
     });
 }
