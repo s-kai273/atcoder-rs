@@ -12,7 +12,7 @@ fn main() {
             let a: u32 = a.parse().unwrap();
             *num_count_map.entry(a).or_insert(0) += 1;
         });
-    let answer: String = if num_count_map
+    let answer: &str = if num_count_map
         .iter()
         .filter(|(_key, value)| **value >= 3)
         .count()
@@ -23,9 +23,9 @@ fn main() {
             .count()
             >= 2
     {
-        "Yes".to_string()
+        "Yes"
     } else {
-        "No".to_string()
+        "No"
     };
     println!("{}", answer);
 }
